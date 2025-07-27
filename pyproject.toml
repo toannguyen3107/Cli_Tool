@@ -1,0 +1,14 @@
+[project]
+name = "frida-tool"
+version = "1.0.0"
+description = "Toan Nguyen's Hacking Tool"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "cryptography>=43.0.3",
+    "requests>=2.32.3",
+    "mcp>=1.0.0",
+]
+
+[project.scripts]
+frida-tool = "cli_tool:main"

@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "frida-tools": {
+      "command": "uv",
+      "args": ["run", "python", "mcp_server.py"],
+      "cwd": "E:\\Tools\\MyHackingTools\\Frida-tool",
+      "env": {}
+    }
+  }
+}

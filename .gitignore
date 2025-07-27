@@ -2,3 +2,4 @@
 **/*.pyc
 __handlers__/
 venv/
+.vscode/**

@@ -22,7 +22,7 @@ def add_parser(subparsers):
 @header
 def get_proxy(args):
     """Retrieve current proxy settings."""
-    run_adb_command("shell settings get global http_proxy")
+    run_adb_command("shell su -c 'settings get global http_proxy'")
 
 @header
 def set_proxy(args):
@@ -31,9 +31,9 @@ def set_proxy(args):
         print(f"{ANSI.YELLOW}[!]{ANSI.RESET}Please provide an IP address.")
         return
     proxy_settings = f"{args.host}:{args.port}"
-    run_adb_command(f"shell settings put global http_proxy {proxy_settings}")
+    run_adb_command(f"shell su -c 'settings put global http_proxy {proxy_settings}'")
 
 @header
 def unset_proxy(args):
     """Unset the proxy server."""
-    run_adb_command("shell settings put global http_proxy :0")
+    run_adb_command("shell su -c 'settings put global http_proxy :0'")
