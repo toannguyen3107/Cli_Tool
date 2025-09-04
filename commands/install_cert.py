@@ -7,9 +7,7 @@ import os
 import shutil
 import requests
 
-from cryptography import x509
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.backends import default_backend
+from OpenSSL import crypto
 import hashlib
 import struct
 
@@ -20,10 +18,10 @@ def subject_hash_old(cert_pem_bytes: bytes) -> str:
     """
     Tính subject_name_hash theo phiên bản OpenSSL 1.x (MD5, little-endian)
     """
-    cert = x509.load_pem_x509_certificate(cert_pem_bytes, default_backend())
+    cert = crypto.load_certificate(crypto.FILETYPE_PEM, cert_pem_bytes)
 
     # Lấy subject DN DER
-    subject_der = cert.subject.public_bytes()
+    subject_der = cert.get_subject().der()
 
     # Tính MD5
     digest = hashlib.md5(subject_der).digest()
@@ -98,24 +96,32 @@ def install_certificate(args):
     print(f"{ANSI.GREEN}toancert.der found in {install_cert_folder} folder{ANSI.RESET}")
 
     # ----------------------------------------------------------
-    # Đọc DER → PEM (không cần OpenSSL CLI)
+    # Đọc DER → PEM (tương đương: openssl x509 -inform DER -in <file> -out cim-cacert.pem)
     # ----------------------------------------------------------
     with open(der_path, "rb") as f:
         cert_der = f.read()
 
-    cert = x509.load_der_x509_certificate(cert_der, default_backend())
-    pem_bytes = cert.public_bytes(encoding=serialization.Encoding.PEM)
+    # Chuyển đổi DER sang PEM
+    cert = crypto.load_certificate(crypto.FILETYPE_ASN1, cert_der)
+    pem_bytes = crypto.dump_certificate(crypto.FILETYPE_PEM, cert)
+    
+    # Lưu file PEM tạm thời
+    pem_temp_path = os.path.join(install_cert_folder, "cim-cacert.pem")
+   
+    with open(pem_temp_path, "wb") as f:
+        f.write(pem_bytes)
 
-    # Tính hash
+    # Tính hash (tương đương: openssl x509 -inform PEM -subject_hash_old -in cim-cacert.pem |head -1)
     hash_name = subject_hash_old(pem_bytes)
     target_filename = f"{hash_name}.0"
     target_path = os.path.join(install_cert_folder, target_filename)
 
-    # Ghi tệp <hash>.0: PEM + newline + DER gốc
+    # Đổi tên file (tương đương: mv cim-cacert.pem <hash>.0)
+    # Nhưng Android yêu cầu format: PEM + newline + DER gốc
     with open(target_path, "wb") as f:
         f.write(pem_bytes)
-        f.write(b"\n")                       # newline
-        f.write(cert_der)                    # thêm DER gốc để tương thích AOSP
+    
+
 
     print(f"{ANSI.GREEN}Created {target_filename} ({hash_name}.0){ANSI.RESET}")
 
@@ -127,12 +133,6 @@ def install_certificate(args):
         f"shell su -c \"cp /data/local/tmp/{target_filename} /data/misc/user/0/cacerts-added/{target_filename}\""
     )
 
-    # Dọn dẹp
-    try:
-        os.remove(target_path)
-    except OSError:
-        pass
-
     inp = input(f"{ANSI.YELLOW}Please reboot the device to apply the changes. Type Y or N: {ANSI.RESET}")
     if inp.strip().upper() == "Y":
         run_adb_command("reboot")
@@ -140,7 +140,7 @@ def install_certificate(args):
     else:
         print(f"{ANSI.YELLOW}Reboot and check!{ANSI.RESET}")
 
-    # ----------------------------------------------------------
+    # --------- -------------------------------------------------
     # Xoá thư mục tạm
     # ----------------------------------------------------------
     if os.path.exists(install_cert_folder):
