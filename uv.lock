@@ -172,7 +172,6 @@ name = "frida-tool"
 version = "1.0.0"
 source = { virtual = "." }
 dependencies = [
-    { name = "cryptography" },
     { name = "mcp" },
     { name = "pyopenssl" },
     { name = "requests" },
@@ -180,7 +179,6 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "cryptography", specifier = ">=43.0.3" },
     { name = "mcp", specifier = ">=1.0.0" },
     { name = "pyopenssl", specifier = ">=25.1.0" },
     { name = "requests", specifier = ">=2.32.3" },
