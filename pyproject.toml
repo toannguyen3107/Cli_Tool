@@ -8,6 +8,7 @@ dependencies = [
     "requests>=2.32.3",
     "mcp>=1.0.0",
     "pyopenssl>=25.1.0",
+    "pure-python-adb>=0.3.0.dev0",
 ]
 
 [project.scripts]

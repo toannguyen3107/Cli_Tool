@@ -1,6 +1,6 @@
 from utils.color_utils import ANSI
 from utils.decorator import header
-from utils.adb_utils import run_adb_command
+from utils.adb_utils import run_adb_command, select_device
 
 def add_parser(subparsers):
     parser = subparsers.add_parser("proxy", help="Manage proxy settings")
@@ -22,7 +22,9 @@ def add_parser(subparsers):
 @header
 def get_proxy(args):
     """Retrieve current proxy settings."""
-    run_adb_command("shell su -c 'settings get global http_proxy'")
+    device = select_device()
+    output = device.shell("su -c 'settings get global http_proxy'")
+    print(f"{ANSI.GREEN}[+] Get Proxy:\n{output}{ANSI.RESET}")
 
 @header
 def set_proxy(args):
@@ -31,9 +33,13 @@ def set_proxy(args):
         print(f"{ANSI.YELLOW}[!]{ANSI.RESET}Please provide an IP address.")
         return
     proxy_settings = f"{args.host}:{args.port}"
-    run_adb_command(f"shell su -c 'settings put global http_proxy {proxy_settings}'")
+    device = select_device()
+    output = device.shell(f"su -c 'settings put global http_proxy {proxy_settings}'")
+    print(f"{ANSI.GREEN}[+] Set Proxy:\n{output}{ANSI.RESET}")
 
 @header
 def unset_proxy(args):
     """Unset the proxy server."""
-    run_adb_command("shell su -c 'settings put global http_proxy :0'")
+    device = select_device()
+    output = device.shell("su -c 'settings put global http_proxy :0'")
+    print(f"{ANSI.GREEN}[+] Unset Proxy:\n{output}{ANSI.RESET}")
