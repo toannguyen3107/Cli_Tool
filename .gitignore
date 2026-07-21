@@ -3,3 +3,7 @@
 __handlers__/
 venv/
 .vscode/**
+.worktrees/
+build/
+dist/
+*.egg-info/

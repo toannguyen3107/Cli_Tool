@@ -4,6 +4,27 @@ A comprehensive command-line toolkit for Android security testing and device man
 
 ## 🚀 Quick Start
 
+### Install with pipx
+
+Install the published release from PyPI:
+
+```powershell
+pipx install frida-tool
+```
+
+Or install the latest source directly from GitHub:
+
+```powershell
+pipx install "git+https://github.com/toannguyen3107/Cli_Tool.git"
+```
+
+Then run the CLI from any directory:
+
+```powershell
+frida-tool --help
+frida-tool devices
+```
+
 ### Command Line Interface
 ```bash
 # Using UV (recommended)
@@ -89,3 +110,24 @@ uv pip install -e .
 # Use globally:
 frida-tool devices
 ```
+
+`pip install frida-tool` can be used instead of `pipx` when the command should
+be installed inside the currently active Python environment. `pipx` is the
+recommended option for a globally available, isolated CLI.
+
+## External Requirements
+
+Installation supplies the Python application and its declared Python
+dependencies. Individual commands may still require software or access outside
+Python:
+
+- `adb` on `PATH`, an Android device, and any required root permissions.
+- Frida server binaries on the target device for `klfrida`.
+- A JDK providing `jarsigner` and a user-supplied keystore for `signapk`.
+- Network access to the certificate endpoint for `install_cert`.
+
+The repository's `config/my-release-key.keystore` is intentionally excluded
+from wheel and source-distribution artifacts. Pass your own keystore with
+`frida-tool signapk --keystore <path>`.
+
+See [RELEASING.md](RELEASING.md) for TestPyPI and PyPI publishing steps.
