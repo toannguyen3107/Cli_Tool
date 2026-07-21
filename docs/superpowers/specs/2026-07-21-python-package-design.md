@@ -63,10 +63,16 @@ then verify installation in a fresh `pipx` environment.
 ## Error handling and compatibility
 
 The `frida-tool` command continues to display argparse help when invoked
-without a subcommand and preserves existing command names and arguments. The
-legacy top-level launch scripts are not required by the packaged interface;
-their removal or compatibility wrappers will be decided during implementation
-only if it avoids duplicate entry points without breaking documented use.
+without a subcommand and preserves existing command names and arguments. All
+legacy source files and launch scripts remain untouched for compatibility. The
+packaged source may change only import paths and module-discovery paths; all
+existing function and class bodies must remain equivalent to their legacy
+counterparts.
+
+The existing keystore stays in the repository unchanged but is excluded from
+distribution artifacts because publishing private signing material to PyPI
+would be unsafe. Commands that require external tools, Android root access, or
+a keystore retain their existing arguments and behavior.
 
 ## Verification
 
