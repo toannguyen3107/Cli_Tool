@@ -3,3 +3,4 @@
 __handlers__/
 venv/
 .vscode/**
+.worktrees/
