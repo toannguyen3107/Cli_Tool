@@ -61,6 +61,7 @@ class PackagedSourceTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stderr)
         for command in (
+            "check_cert",
             "connect",
             "devices",
             "install_cert",
