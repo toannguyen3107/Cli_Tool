@@ -15,7 +15,7 @@ pipx install frida-tool
 Or install the latest source directly from GitHub:
 
 ```powershell
-pipx install "git+https://github.com/toannguyen3107/Frida-tool.git"
+pipx install "git+https://github.com/toannguyen3107/Cli_Tool.git"
 ```
 
 Then run the CLI from any directory:
